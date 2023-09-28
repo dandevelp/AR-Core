@@ -1,14 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.HID;
-//using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
 
@@ -22,13 +15,9 @@ public class SpawnableManager : MonoBehaviour
     
     public List<PlacedEnemy> PlacedEnemyList = new List<PlacedEnemy>();
 
-    //public GameObject text;
-    //private Text _text;
     private Label _text;
     private Label _text2;
 
-    //public GameObject button;
-    //private Button _button;
     private Button _buttonDelete;
     private Button _buttonClear;
     private Button _buttonCreation;
@@ -77,9 +66,6 @@ public class SpawnableManager : MonoBehaviour
     {
         spawnableObj = null;
         cam = GameObject.Find("AR Camera").GetComponent<Camera>();
-        //uiDocument = GameObject.Find("UIPlain").GetComponent<UIDocument>();
-
-        //uiDocument = GetComponent<UIDocument>();
         _text = uiDocument.rootVisualElement.Q("ui_lbl_01") as Label;
         _text2 = uiDocument.rootVisualElement.Q("ui_lbl_02") as Label;
         _buttonDelete = uiDocument.rootVisualElement.Q("ui_btn_01") as Button;
@@ -116,14 +102,6 @@ public class SpawnableManager : MonoBehaviour
         CombatManager.OnEnd += _combatManager_OnEnd;
 
         _centerVector2 = new Vector2(Screen.width / 2, Screen.height / 2);
-
-        //_text = text.GetComponent<Text>();
-        //_button = button.GetComponent<Button>();
-
-        //_text = GameObject.Find("ui_lbl_01").GetComponent<Text>();
-        //_button = GameObject.Find("ui_btn_01").GetComponent<Button>();
-
-        //_button.onClick.AddListener(btn_clickEvent);
     }
 
     // Update is called once per frame
@@ -134,26 +112,7 @@ public class SpawnableManager : MonoBehaviour
 
         if (Input.touchCount == 0) return;
 
-        //var h = Screen.height;
-
-        //if (Input.GetTouch(0).position.y < _visualElement.contentRect.yMax)
         if (Input.GetTouch(0).position.y < _lowerUIHeight) return;
-
-        //if (_visualElement.HasPointerCapture(PointerId.touchPointerIdBase))
-        //{
-        //    Debug.Log("inside");
-        //}
-
-        
-        
-        //var g = EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
-        //Input.GetTouch(0).position
-
-        //Physics.Raycast(ray, out hit);
-        
-        //var g = hit.collider;
-
-        //if (Input.GetTouch(0).position.x >= 90 && Input.GetTouch(0).position.y >= 30) return;
 
         if (raycastManager.Raycast(Input.GetTouch(0).position, aRRaycastHits))
         {
@@ -169,20 +128,14 @@ public class SpawnableManager : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Input.GetTouch(0).position);
         _text2.text = string.Format("x: {0} | y: {1}", Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
         _text.text = "";
-        if (Input.GetTouch(0).phase == TouchPhase.Began /*&& spawnableObj == null*/)
+        if (Input.GetTouch(0).phase == TouchPhase.Began)
         {
-            if (Physics.Raycast(ray, out hit) /*&& hit.collider.gameObject.layer != 5*/)
+            if (Physics.Raycast(ray, out hit))
             {
-                //_text2.text = string.Format("layer: {0} | tag: {1}", hit.collider.gameObject.layer, hit.collider.gameObject.tag);
-                //_text2.text = string.Format("layer: {0} | tag: {1}", hit.collider.gameObject.layer, hit.collider.gameObject.tag);
-
                 if (hit.collider.gameObject.tag == "Spawnable")
                 {
-                    //var renderer = spawnableObj.GetComponent<Renderer>();
-                    //renderer.material.SetColor("_Color", Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
                     _text.text = "selected object";
                     spawnableObj = hit.collider.gameObject;
-                    //lastSelectedSpawnableObj = hit.collider.gameObject;
                 }
                 else
                 {
@@ -194,10 +147,6 @@ public class SpawnableManager : MonoBehaviour
         }
         else if (Input.GetTouch(0).phase == TouchPhase.Moved && spawnableObj != null)
         {
-            //updateSelectedColor();
-            //var renderer = spawnableObj.GetComponent<Renderer>();
-            //renderer.material.SetColor("_Color", Color.yellow);
-
             updateSelectedColor(spawnableObj);
             _text.text = "moving object";
             spawnableObj.transform.position = aRRaycastHits[0].pose.position;
@@ -217,7 +166,6 @@ public class SpawnableManager : MonoBehaviour
     {
         if (raycastManager.Raycast(_centerVector2, aRRaycastHits))
         {
-            //_text2.text = string.Format("x: {0} | y: {1}", Screen.width / 2, Screen.height / 2);
             _text.text = "battle mode";
             Ray ray = cam.ScreenPointToRay(_centerVector2);
             if (Physics.Raycast(ray, out hit))
@@ -227,13 +175,10 @@ public class SpawnableManager : MonoBehaviour
                 {
                     _buttonCombatStart.SetEnabled(true);
                     _text2.text = "hit one";
-                    //updateSelectedColor(false);
-                    //lastSelectedSpawnableObj = spawnableObj;
                     lastSelectedSpawnableObj = hit.collider.gameObject;
                     updateSelectedColor(lastSelectedSpawnableObj);
-                    //renderer.material.SetColor("_Color", Color.yellow);
                 }
-                else /*if (lastSelectedSpawnableObj != null)*/
+                else
                 {
                     _buttonCombatStart.SetEnabled(false);
                     updateSelectedColor(lastSelectedSpawnableObj, false);
@@ -252,7 +197,6 @@ public class SpawnableManager : MonoBehaviour
     private void AddNewObject()
     {
         PlacedEnemyList.Add(new PlacedEnemy(spawnablePrefab, aRRaycastHits[0].pose.position));
-        //_text2.text += string.Format( "New one added: Nº {0} \n", gameObjects.Count);
     }
 
     void UpdateObjectPosition()
@@ -262,8 +206,6 @@ public class SpawnableManager : MonoBehaviour
 
     private void SpawnPrefab(Vector3 spawnPosition)
     {
-        //var renderer = spawnableObj.GetComponent<Renderer>();
-        //renderer.material.SetColor("_Color", Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
         spawnableObj = Instantiate(spawnablePrefab, spawnPosition, Quaternion.identity);
     }
 
@@ -340,7 +282,6 @@ public class SpawnableManager : MonoBehaviour
 
     private void deleteSelected()
     {
-        //gameObjects.Remove(x=> x.obj) .Where(x=> x.obj == )
         PlacedEnemy placedObject = PlacedEnemyList.FirstOrDefault(x => x.Obj == lastSelectedSpawnableObj);
 
         PlacedEnemyList.Remove(placedObject);

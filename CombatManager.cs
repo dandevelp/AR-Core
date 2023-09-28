@@ -1,12 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class CombatManager : MonoBehaviour
 {
-
     public delegate void BattleStatus();
     public static event BattleStatus OnEnd;
 
@@ -65,21 +61,8 @@ public class CombatManager : MonoBehaviour
 
     private void setEnemySprite()
     {
-        //EnemyPrefab.GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("Sprites/Bat");
-
         Instantiate(EnemyPrefab);
-        //UnityEngine.UI.Image g = 
         GameObject.Find("EnemySprite").GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>(string.Format("Sprites/{0}", _currentEnemy.Img));
-        //g.sprite = Resources.Load<Sprite>("Sprites/Bat");
-
-        //.sprite = Resources.Load<Sprite>("Sprites/Bat");
-
-
-        /*.GetComponent<Camera>();*/
-
-        //_enemySpriteElement.style.backgroundImage = new StyleBackground(Resources.Load<Sprite>("Sprites/Bat"));
-
-        //var sprite = Resources.Load<Sprite>("Sprites/Bat");
     }
 
     private void destroyEnemyComponent()
@@ -89,7 +72,6 @@ public class CombatManager : MonoBehaviour
         {
             Destroy(go);
         }
-        //Destroy(EnemyPrefab);
     }
 
     private void _buttonAttack_onClick()
